@@ -4,21 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Location Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
         #map {
             height: 600px; /* Adjust height as needed */
             width: 100%;
-            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
     <h1>GPS Location from ESP32</h1>
-    <iframe id="map" src="http://192.168.1.134/location" frameborder="0"></iframe>
-    <p>Make sure your ESP32 is accessible over the internet.</p>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Replace with your ESP32's IP address or ngrok URL
+        const esp32Url = 'http://192.168.1.134/location'; // e.g., 'http://192.168.1.100/location'
+
+        // Function to fetch GPS data from the ESP32
+        async function fetchGPSData() {
+            try {
+                const response = await fetch(esp32Url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const gpsData = await response.text();
+                displayMap(gpsData);
+            } catch (error) {
+                console.error('Error fetching GPS data:', error);
+                alert('Failed to retrieve GPS data.');
+            }
+        }
+
+        // Function to display the map with the retrieved GPS data
+        function displayMap(gpsData) {
+            const coords = gpsData.split(',');
+            if (coords.length === 2) {
+                const latitude = parseFloat(coords[0]);
+                const longitude = parseFloat(coords[1]);
+
+                // Initialize the Leaflet map
+                var map = L.map('map').setView([latitude, longitude], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                L.marker([latitude, longitude]).addTo(map)
+                    .bindPopup('GPS Location: ' + latitude + ', ' + longitude)
+                    .openPopup();
+            } else {
+                alert('Invalid GPS data received.');
+            }
+        }
+
+        // Fetch GPS data when the page loads
+        window.onload = fetchGPSData;
+    </script>
 </body>
 </html>
