@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Map Project</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>GPS Location Map</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
         #map {
-            height: 400px;
+            height: 600px; /* Adjust height as needed */
             width: 100%;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    <h1>My Map Project</h1>
-    <div id="map"></div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-        var marker = L.marker([51.5, -0.09]).addTo(map);
-    </script>
+    <h1>GPS Location from ESP32</h1>
+    <iframe id="map" src="http://192.168.1.134/location" frameborder="0"></iframe>
+    <p>Make sure your ESP32 is accessible over the internet.</p>
 </body>
 </html>
